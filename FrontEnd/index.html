@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backend Intern Assignment</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
+        .container { width: 300px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        input { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #message { margin-top: 10px; color: red; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Login (Task Round-0)</h3>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="handleLogin()">Login</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msgDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    msgDiv.style.color = 'green';
+                    msgDiv.innerText = "Login Successful! Role: " + data.role;
+                    
+                } else {
+                    msgDiv.innerText = data.message || "Login Failed";
+                }
+            } catch (err) {
+                msgDiv.innerText = "Server Error: " + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
